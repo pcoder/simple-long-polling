@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 String//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+	<head>
+	<title>test long polling</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript">
+		var timestamp = null;
+		function waitForMsg(){
+			$.ajax({
+				type: "GET",
+				url: "getdata.php?timestamp=" + timestamp,
+				async: true,
+				cache: false,
+				
+				success: function(data){
+					var json = eval('(' + data + ')');
+					if( json['msg'] != "")
+						alert(json['msg']);
+					timestamp = json['timestamp'];
+					setTimeout('waitForMsg()', 1000);
+				},
+				
+				error: function(XMLHttpRequest, textStatus, errorThrown){
+					alert("error " + textStatus + " (" + errorThrown + ")");
+					setTimeout("waitForMsg()", 15000);
+				}
+			});
+		}
+		
+		$(document).ready(function(){
+				waitForMsg();
+		});
+	
+	</script>
+	
+	
+	</head>
+
+</html>
